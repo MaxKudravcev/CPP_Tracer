@@ -21,14 +21,30 @@ namespace Laba_1
             TraceResult tr = tracer.GetTraceResult();
 
 
-            //TraceResultXMLSerializer ser = new TraceResultXMLSerializer();
-            JSONSerializer ser = new JSONSerializer();
+            Console.WriteLine("Which format do you want to serialize result to:");
+            Console.WriteLine("1) XML");
+            Console.WriteLine("2) JSON");
+            ISerializer ser;
+            string inp = Console.ReadLine();
+            if(inp == "1")
+                ser = new TraceResultXMLSerializer();
+            else
+                ser = new JSONSerializer();
+
             byte[] t = ser.Serialize(tr);
-            TraceResultOutput.WriteToStream(t, Console.OpenStandardOutput());
-            using (FileStream fs = new FileStream("test.txt", FileMode.OpenOrCreate, FileAccess.Write))
-                TraceResultOutput.WriteToStream(t, fs);
-            
-                Console.ReadLine();
+            Console.WriteLine();
+            Console.WriteLine("Possible options to output the resutlt:");
+            Console.WriteLine("1) Console");
+            Console.WriteLine("2) .txt file");
+            inp = Console.ReadLine();
+            if(inp == "1")
+                TraceResultOutput.WriteToStream(t, Console.OpenStandardOutput());
+            else
+                using (FileStream fs = new FileStream("test.txt", FileMode.OpenOrCreate, FileAccess.Write))
+                    TraceResultOutput.WriteToStream(t, fs);
+
+            Console.WriteLine("\nThe result has been outputted successfully. Press any key to exit the program.");
+            Console.ReadLine();
         }
 
         static void TestA()
@@ -84,15 +100,15 @@ namespace Laba_1
         static void TestAsync()
         {
             tracer.StartTrace();
-            Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
+           
 
             ThreadStart threadStart = new ThreadStart(TestE);
             Thread thread = new Thread(threadStart);
             thread.Start();
             thread.Join();
-            //Console.WriteLine("Async job end");
+            
 
-            Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
+            
             tracer.StopTrace();
         }
     }
