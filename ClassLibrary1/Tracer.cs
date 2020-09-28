@@ -4,16 +4,32 @@ using System.Threading;
 
 namespace TracerLib
 {
+    /// <summary>
+    /// Tracer for measuring methods execution speed and building call-trees
+    /// </summary>
     public class Tracer : ITracer
     {
+        #region Private fields
+
         private TraceResult traceResult = new TraceResult();
         private ConcurrentDictionary<int, Stack<MethodTraceResult>> threadStacks = new ConcurrentDictionary<int, Stack<MethodTraceResult>>();
 
+        #endregion
+
+        #region Public methods
+
+        /// <summary>
+        /// Get tracer results
+        /// </summary>
+        /// <returns>An instance of "TraceResult"</returns>
         public TraceResult GetTraceResult()
         {
             return traceResult;
         }
 
+        /// <summary>
+        /// Starts tracing of the method from which this method is called
+        /// </summary>
         public void StartTrace()
         {
             MethodTraceResult method = new MethodTraceResult();
@@ -25,6 +41,9 @@ namespace TracerLib
             method.StartStopwatch();
         }
         
+        /// <summary>
+        /// Stops tracing of current method, adds the result to the traceResult field
+        /// </summary>
         public void StopTrace()
         {
             var method = threadStacks[Thread.CurrentThread.ManagedThreadId].Pop();
@@ -43,5 +62,7 @@ namespace TracerLib
                 thread.AddMethod(method); 
             }
         }
+
+        #endregion
     }
 }
